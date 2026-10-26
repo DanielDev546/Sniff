@@ -38,7 +38,7 @@
     <h1>Sniff</h1>
     <span class="dot" aria-hidden="true"></span>
   </div>
-  <span class="day">Day 1 of 30</span>
+  <span class="day">Day 2 of 30</span>
 </header>
   <p class="lead">Scan Hacker News for problems people keep complaining about, then build the fix.</p>
 
