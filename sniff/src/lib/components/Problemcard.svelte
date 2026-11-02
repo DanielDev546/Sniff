@@ -1,9 +1,12 @@
 <script lang="ts">
-  import type { Problem } from '$lib/types';
+  import SeverityBadge from '#lib/components/SeverityBadge.svelte';
+  import { levelFor } from '#lib/severity.js';
+  import type { Problem } from '#lib/types';
 
   let { problem, rank, maxMentions }: { problem: Problem; rank: number; maxMentions: number } = $props();
 
-  // Heat = how often this problem appears compared with the top one.
+  let level = $derived(levelFor(problem.mentions));
+
   const heat = $derived(problem.mentions / maxMentions);
   const tone = $derived(heat > 0.66 ? 'hot' : heat > 0.33 ? 'warm' : 'cool');
 </script>
@@ -11,6 +14,7 @@
 <article class="card {tone}">
   <div class="meter" aria-hidden="true"><span style="width: {heat * 100}%"></span></div>
 
+  <SeverityBadge {level} />
   <header>
     <span class="rank">#{rank}</span>
     <h3>{problem.title}</h3>
@@ -18,11 +22,13 @@
   </header>
 
   <p class="summary">{problem.summary}</p>
-
+  
+  {#if problem.buildIdea}
   <div class="idea">
     <span class="tag">Build idea</span>
     <p>{problem.buildIdea}</p>
   </div>
+   {/if}
 
   {#if problem.sources.length}
     <ul class="sources">

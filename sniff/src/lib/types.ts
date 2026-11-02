@@ -5,7 +5,7 @@ export type Problem = {
   title: string;
   summary: string;
   mentions: number;
-  buildIdea: string;
+  buildIdea?: string;
   sources: Source[];
 };
 

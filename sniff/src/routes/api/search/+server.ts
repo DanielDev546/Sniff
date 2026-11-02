@@ -1,9 +1,9 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { cleanText } from "#lib/clean";
+import { rankProblems } from "#lib/rank";
 import { isComplaint } from "#lib/complaints";
-
-const MIN_LENGTH = 80;
+const MIN_LENGTH = 40;
 
 export const GET: RequestHandler = async ({ url }) => {
   const q = url.searchParams.get("q")?.trim();
@@ -36,8 +36,15 @@ export const GET: RequestHandler = async ({ url }) => {
       .filter((p: { text: string }) => p.text.length >= MIN_LENGTH)
       .filter((p: { text: string }) => isComplaint(p.text));
 
-    return json({ query: q, scanned: all.length, count: posts.length, posts });
-  } catch {
-    return json({ error: "Could not reach Hacker News" }, { status: 502 });
+    return json({
+      query: q,
+      scanned: all.length,
+      count: posts.length,
+      problems: rankProblems(posts),
+      posts,
+    });
+  } catch (err) {
+    console.error(err);
+    return json({ error: "Search failed" }, { status: 500 });
   }
 };

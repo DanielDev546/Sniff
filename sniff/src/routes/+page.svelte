@@ -1,13 +1,19 @@
 <script lang="ts">
   import '../app.css';
+  import { results } from '#lib/results.svelte.js'
   import SearchBar from '#lib/components/SearchBar.svelte';
   import ProblemList from '#lib/components/ProblemList.svelte';
   import PostFeed from '#lib/components/PostFeed.svelte';
-  import type { Post, Status } from '#lib/types';
+  import type { Post, Problem, Status } from '#lib/types';
+  import Sidebar from '#lib/components/Sidebar.svelte';
+
+
 
   let status = $state<Status>('idle');
   let keyword = $state('');
   let posts = $state<Post[]>([]);
+  let problems = $state<Problem[]>([]);
+  let scanned = $state(0);
   let postCount = $state(0);
   let error = $state('');
 
@@ -23,6 +29,8 @@
       }
       const data = await res.json();
       posts = data.posts;
+      problems = data.problems  ?? [];
+      scanned = data.scanned;
       postCount = data.count;
       status = 'done';
     } catch (e) {
@@ -30,55 +38,44 @@
       status = 'error';
     }
   }
+
 </script>
 
 <main>
- <header class="top">
-  <div class="brand">
-    <h1>Sniff</h1>
-    <span class="dot" aria-hidden="true"></span>
-  </div>
-  <span class="day">Day 2 of 30</span>
-</header>
+  <header class="top">
+    <div class="brand">
+      <h1>Sniff</h1>
+      <span class="dot" aria-hidden="true"></span>
+    </div>
+    <span class="day">Day 7 of 30</span>
+  </header>
   <p class="lead">Scan Hacker News for problems people keep complaining about, then build the fix.</p>
 
   <SearchBar loading={status === 'loading'} onsearch={search} />
 
   {#if status === 'done'}
-    <p class="found">Found {postCount} posts about “{keyword}”</p>
+    <p class="found">Scanned {scanned} comments, kept {postCount} complaints about “{keyword}”</p>
   {/if}
 
   <section class="results">
-    {#if status === 'done'}
-      <PostFeed {posts} />
-    {:else}
-      <ProblemList {status} problems={[]} {error} />
-    {/if}
+    <ProblemList {status} {problems} {error} />
   </section>
+
+  {#if status === 'done' && posts.length}
+    <h2 class="sub">The comments behind them</h2>
+    <PostFeed {posts} />
+  {/if}
 </main>
 
 <style>
-.brand {
-  display: flex;
-  align-items: baseline;
-  gap: 0.12em;
-  font-size: clamp(1.8rem, 6vw, 2.6rem);
-}
-h1 {
-  font: 800 1em var(--font-display);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-.dot {
-  width: 0.24em;
-  height: 0.24em;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 12px var(--green);
-}  main { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.2rem 4rem; }
+  main { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.2rem 4rem; }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .brand { display: flex; align-items: baseline; gap: 0.12em; font-size: clamp(1.8rem, 6vw, 2.6rem); }
+  h1 { font: 800 1em var(--font-display); margin: 0; letter-spacing: -0.02em; }
+  .dot { width: 0.24em; height: 0.24em; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); }
   .day { font: 400 0.8rem var(--font-mono); color: var(--green); border: 1px solid var(--green); border-radius: 999px; padding: 0.25rem 0.7rem; white-space: nowrap; }
   .lead { color: var(--muted); margin: 0.6rem 0 1.6rem; max-width: 55ch; line-height: 1.5; }
   .found { margin: 1.5rem 0 0; color: var(--muted); font: 400 0.85rem var(--font-mono); }
   .results { margin-top: 1rem; }
-</style> 
+  .sub { font: 800 1.2rem var(--font-display); margin: 2.5rem 0 1rem; }
+</style>

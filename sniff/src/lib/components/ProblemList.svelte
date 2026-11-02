@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Problem, Status } from '$lib/types';
+  import type { Problem, Status } from '#lib/types';
   import ProblemCard from './Problemcard.svelte';
 
   let { status, problems, error = '' }: { status: Status; problems: Problem[]; error?: string } = $props();
