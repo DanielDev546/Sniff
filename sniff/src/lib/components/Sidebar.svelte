@@ -41,7 +41,7 @@
 
 <style>
   aside {
-    position: sticky; top: 0; height: 100vh;
+    position: sticky; top: 0; width: 125%;  height: 100vh;
     display: flex; flex-direction: column; gap: 2rem;
     padding: 1.5rem 1rem;
     background: rgba(255, 255, 255, 0.02);
@@ -51,7 +51,7 @@
   .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; color: #fff; text-decoration: none; padding: 0 0.6rem; }
   .brand span { color: #00ff88; }
 
-  nav { display: flex; flex-direction: column; gap: 0.25rem; }
+  nav { display: flex; flex-direction: column; gap: 0.5rem; }
   nav a {
     display: flex; align-items: center; gap: 0.75rem;
     padding: 0.65rem 0.8rem; border-radius: 10px;
